@@ -1,0 +1,15 @@
+aiohttp==3.6.2
+async-timeout==3.0.1
+attrs==20.2.0
+beautifulsoup4==4.5.3
+certifi==2019.11.28
+chardet==3.0.4
+discord.py==1.5.0
+idna==2.9
+multidict==4.7.6
+requests==2.12.4
+selenium==3.141.0
+soupsieve==2.0
+strawpy==1.1
+urllib3==1.25.8
+yarl==1.6.0
