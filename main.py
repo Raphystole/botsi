@@ -50,7 +50,7 @@ async def aliases(ctx):
 @bot.command(aliases=['mesinfos', 'modifier', 'mi', 'maj'])
 async def mes_infos(ctx, account_type, username):
     account_type = account_type.lower()
-    account_type = account_type.replace("flashinvaders", "flash_invaders").replace("site", "website").replace("webwebsite", "website")
+    account_type = account_type.replace("flashinvaders", "flash_invaders").replace("site", "website").replace("webwebsite", "website").replace("spotter-invader", "spotter")
     if account_type in ["flash_invaders","website","instagram","flickr","spotter"]:
         url_api = "http://invaders.art.free.fr/botsi/users.php?controller=set_"+account_type+"&id_discord="+str(ctx.message.author.id)+"&"+account_type+"="+username+"&api_token="+api_token
         requests.get(url_api)
