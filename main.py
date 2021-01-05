@@ -7,6 +7,7 @@ from discord.ext import commands
 import requests #Afin de pouvoir accéder à une page web avec une requête POST
 from bs4 import BeautifulSoup #Scrapping simplifié
 import re #Regex
+import json #JSON
 
 #Librairie permettant l'accès aux variables d'environnement
 import os
@@ -33,6 +34,7 @@ async def aide(ctx):
     description_content += "**!si VILLE_NUMERO** : affiche les informations d'un SI - exemple : !si PA_1200\n"
     description_content += "**!ville VILLE** : affiche les informations d'une ville - exemple : !ville Paris ou !ville PA\n"
     description_content += "**!mes_infos SERVICE PSEUDO** : met à jour mes informations - exemple : !mes_infos instagram Raphystole *!Confidentialité pour connaitre l'utlisation de tes données*\n"
+    description_content += "**!infos @UTILISATEUR** : affiche les informations d'un utilisateur - exemple : !infos @Raphystole\n"
     description_content += "*Vos informations ne seront pas divulguées hors de ce robot. Celles-ci sont conservées pendant une durée de 3 ans maximum et peuvent être détruites sur simple demande ou en utilisant la commande dédiée.*\n"
     embed=discord.Embed(color=0x04ff00, title="Fonctionnement du robot :", description=description_content)
     await ctx.send(embed=embed)
@@ -57,36 +59,47 @@ async def mes_infos(ctx, account_type, username):
         account_type = account_type.replace("flash_invaders", "pseudo FlashInvaders").replace("instagram", "pseudo Instagram").replace("spotter", "pseudo Spotter-Invader").replace("flickr", "pseudo Flickr").replace("website", "site internet")
         await ctx.send("Ton "+account_type+" a bien été mis à jour !")
     else :
-        await ctx.send("Ce service n'est pas pris en compte par le robot.\nServices pris en compte : FlashInvader, Instagram, Flickr, Spotter-Invader, Website.")
+        await ctx.send("Ce service n'est pas pris en compte par le robot.\nServices pris en compte : FlashInvaders, Instagram, Flickr, Spotter-Invader, Website.")
 
 #Mettre à jour ses données utilisateur
 @bot.command(aliases=['i'])
 async def infos(ctx, user: discord.User):
-    r = requests.get("http://invaders.art.free.fr/botsi/users.php?controller=get_all&id_discord="+str(user.id)+"&api_token="+api_token).json()
-    is_blank = True
-    embed_description = ""
-    if r["flash_invaders"]:
-        embed_description = "**FlashInvaders :** ["+r["flash_invaders"]+"](https://www.decrocher-la-lune.com/invader/user/"+r["flash_invaders"].replace(" ","%20")+")\n"
-        is_blank = False
-    if r["instagram"]:
-        embed_description += "**Instagram :** ["+r["instagram"]+"](https://www.instagram.com/"+r["instagram"]+")\n"
-        is_blank = False
-    if r["spotter"]:
-        embed_description += "**Spotter-Invader :** "+r["spotter"]+"\n"
-        is_blank = False
-    if r["flickr"]:
-        embed_description += "**Flickr :** "+r["flickr"]+"\n"
-        is_blank = False
-    if r["website"]:
-        embed_description += "**Site internet :** "+"["+r["website"]+"]("+r["website"]+")\n"
-        is_blank = False
-    if is_blank :
+response = requests.get("http://invaders.art.free.fr/botsi/users.php?controller=get_all&id_discord="+str(user.id)+"&api_token="+api_token)
+    try:
+        r=response.json()
+        is_blank = True
+        embed_description = ""
+        if r["flash_invaders"]:
+            embed_description = "**FlashInvaders :** ["+r["flash_invaders"]+"](https://www.decrocher-la-lune.com/invader/user/"+r["flash_invaders"].replace(" ","%20")+")\n"
+            is_blank = False
+        if r["instagram"]:
+            embed_description += "**Instagram :** ["+r["instagram"]+"](https://www.instagram.com/"+r["instagram"]+")\n"
+            is_blank = False
+        if r["spotter"]:
+            embed_description += "**Spotter-Invader :** "+r["spotter"]+"\n"
+            is_blank = False
+        if r["flickr"]:
+            embed_description += "**Flickr :** "+r["flickr"]+"\n"
+            is_blank = False
+        if r["website"]:
+            embed_description += "**Site internet :** "+"["+r["website"]+"]("+r["website"]+")\n"
+            is_blank = False
+        if r["flash_invaders"]:
+            players_data = requests.get("https://api.space-invaders.com/api/search_player/?uid=&search_name="+r["flash_invaders"]).json()["Players"]
+            for p in players_data:
+                if p["name"] == r["flash_invaders"].upper():
+                    embed_description += "--------------------\n"
+                    embed_description += "**SI flashés :** "+str(p["invaders_count"])+" ("+str(p["city_count"])+" villes)\n"
+                    embed_description += "**Rang :** "+str(p["rank"])+" ("+str(p["score"])+" points)\n"
+        if is_blank :
+            await ctx.send("Aucunes données pour cet utilisateur")
+        else :
+            embed_description = embed_description[:-1]
+            embed=discord.Embed(color=0x04ff00, title="Informations sur "+str(user).rsplit("#",1)[0], description=embed_description)
+            embed.set_thumbnail(url=user.avatar_url)
+            await ctx.send(embed=embed)
+    except:
         await ctx.send("Aucunes données pour cet utilisateur")
-    else :
-        embed_description = embed_description[:-1]
-        embed=discord.Embed(color=0x04ff00, title="Informations sur "+str(user).rsplit("#",1)[0], description=embed_description)
-        embed.set_thumbnail(url=user.avatar_url)
-        await ctx.send(embed=embed)
 
 #Mettre à jour ses données utilisateur
 @bot.command(aliases=['map', 'invasion_map','invasionmap'])
