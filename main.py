@@ -64,7 +64,7 @@ async def mes_infos(ctx, account_type, username):
 #Mettre à jour ses données utilisateur
 @bot.command(aliases=['i'])
 async def infos(ctx, user: discord.User):
-response = requests.get("http://invaders.art.free.fr/botsi/users.php?controller=get_all&id_discord="+str(user.id)+"&api_token="+api_token)
+    response = requests.get("http://invaders.art.free.fr/botsi/users.php?controller=get_all&id_discord="+str(user.id)+"&api_token="+api_token)
     try:
         r=response.json()
         is_blank = True
