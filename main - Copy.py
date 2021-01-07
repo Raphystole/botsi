@@ -84,6 +84,13 @@ async def infos(ctx, user: discord.User):
         if r["website"]:
             embed_description += "**Site internet :** "+"["+r["website"]+"]("+r["website"]+")\n"
             is_blank = False
+        if r["flash_invaders"]:
+            players_data = requests.get("https://api.space-invaders.com/api/search_player/?uid=&search_name="+r["flash_invaders"]).json()["Players"]
+            for p in players_data:
+                if p["name"] == r["flash_invaders"].upper():
+                    embed_description += "--------------------\n"
+                    embed_description += "**SI flashés :** "+str(p["invaders_count"])+" ("+str(p["city_count"])+" villes)\n"
+                    embed_description += "**Rang :** "+str(p["rank"])+" ("+str(p["score"])+" points)\n"
         if is_blank :
             await ctx.send("Aucunes données pour cet utilisateur")
         else :
