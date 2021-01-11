@@ -169,7 +169,7 @@ async def si(ctx, si):
         zfill_value = 2
     si_numero = si_numero.zfill(zfill_value)
     if si_ville=="PA":
-        data = dict(numero=si_numero,prs="on",toutparis="on",PA01="on",PA02="on",PA03="on",PA04="on",PA05="on",PA06="on",PA07="on",PA08="on",PA09="on",PA10="on",PA11="on",PA12="on",PA13="on",PA14="on",PA15="on",PA16="on",PA17="on",PA18="on",PA19="on",PA20="on",PA77="on",PA92="on",PA93="on",PA94="on")
+        data = dict(numero=si_numero,prs="on",toutparis="on",PA01="on",PA02="on",PA03="on",PA04="on",PA05="on",PA06="on",PA07="on",PA08="on",PA09="on",PA10="on",PA11="on",PA12="on",PA13="on",PA14="on",PA15="on",PA16="on",PA17="on",PA18="on",PA19="on",PA20="on",PA77="on",PA92="on",PA93="on",PA94="on",PA95="on")
     else:
         data = {}
         data[si_ville] = "on"
