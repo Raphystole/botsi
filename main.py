@@ -106,6 +106,18 @@ async def carte(ctx, map_number):
     if r["release_date"]:
         embed_description += "**Date de sortie :** "+str(r["release_date"])+"\n"
         is_blank = False
+    if r["copies"]:
+        embed_description += "**Nombre de copies :** "+str(r["copies"])
+        if r["signed_copies"]:
+            embed_description += " (et "+str(r["signed_copies"])+" signées)"
+        embed_description += "\n"
+        is_blank = False
+    if r["format"]:
+        embed_description += "**Format :** "+str(r["format"])+"\n"
+        is_blank = False
+    if r["source"]:
+        embed_description += "**Source :** "+str(r["source"])+"\n"
+        is_blank = False
     embed_description += "[Voir la carte complète](http://invaders.art.free.fr/botsi/maps?controller=map&map="+map_number+")"
     if is_blank :
         await ctx.send("Cette carte n'existe pas")
