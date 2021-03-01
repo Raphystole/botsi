@@ -172,12 +172,15 @@ async def si(ctx, si):
     si_split = si.split("_")
     if len(si_split) != 2:
         await ctx.send("Le format du SI n'est pas bon")
+        return
     si_ville = si_split[0].upper()
     si_numero = si_split[1].lstrip("0")
     if si_ville == "DSK":
         await ctx.send("Nous n'avons pas encore la prétention d'être des envahisseurs de l'espace...")
+        return
     if si_ville not in cities_list:
         await ctx.send("La ville \""+si_ville+"\" n'a pas été envahie")
+        return
     if si_ville == "PA":
         zfill_value = 4
     elif si_ville == "LDN" or si_ville == "HK" or si_ville == "LA" or si_ville == "NY" or si_ville == "TK":
