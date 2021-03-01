@@ -169,6 +169,9 @@ async def ville(ctx, ville):
 #Affichage des infos sur un SI
 @bot.command()
 async def si(ctx, si):
+    if si == "DSK_2806":
+        await ctx.send(":underage:")
+        return
     si_split = si.split("_")
     if len(si_split) != 2:
         await ctx.send("Le format du SI n'est pas bon")
