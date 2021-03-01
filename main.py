@@ -169,21 +169,23 @@ async def ville(ctx, ville):
 #Affichage des infos sur un SI
 @bot.command()
 async def si(ctx, si):
+    si_split = si.split("_")
+    si_ville = si_split[0].upper()
+    si_numero = si_split[1].lstrip("0")
+    #Gestion des erreurs
     if si.upper() == "DSK_2806":
         await ctx.send(":underage:")
         return
-    si_split = si.split("_")
     if len(si_split) != 2:
         await ctx.send("Le format du SI n'est pas bon")
         return
-    si_ville = si_split[0].upper()
-    si_numero = si_split[1].lstrip("0")
     if si_ville == "DK":
         await ctx.send("Nous n'avons pas encore la prétention d'être des envahisseurs de l'espace...")
         return
     if si_ville not in cities_list:
         await ctx.send("La ville \""+si_ville+"\" n'a pas été envahie")
         return
+    #Formattage des chiffres
     if si_ville == "PA":
         zfill_value = 4
     elif si_ville == "LDN" or si_ville == "HK" or si_ville == "LA" or si_ville == "NY" or si_ville == "TK":
@@ -191,12 +193,13 @@ async def si(ctx, si):
     else:
         zfill_value = 2
     si_numero = si_numero.zfill(zfill_value)
+    #Formattage de la ville
     if si_ville=="PA":
         data = dict(numero=si_numero,prs="on",toutparis="on",PA01="on",PA02="on",PA03="on",PA04="on",PA05="on",PA06="on",PA07="on",PA08="on",PA09="on",PA10="on",PA11="on",PA12="on",PA13="on",PA14="on",PA15="on",PA16="on",PA17="on",PA18="on",PA19="on",PA20="on",PA77="on",PA92="on",PA93="on",PA94="on",PA95="on")
     else:
         data = {}
         data[si_ville] = "on"
-        data["numero"] = si_numero    
+        data["numero"] = si_numero
     r = requests.post("http://invader.spotter.free.fr/listing.php", data=data, allow_redirects=True) #Requête sur le site avec la variable précédente en méthode POST (page)
     soup = BeautifulSoup(r.content, 'html.parser') #Parsing de la page récupérée
     regex_1 = re.compile('^haut') #Définition du regex
