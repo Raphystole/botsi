@@ -169,7 +169,7 @@ async def ville(ctx, ville):
 #Affichage des infos sur un SI
 @bot.command()
 async def si(ctx, si):
-    if si == "DSK_2806":
+    if si.upper() == "DSK_2806":
         await ctx.send(":underage:")
         return
     si_split = si.split("_")
@@ -178,7 +178,7 @@ async def si(ctx, si):
         return
     si_ville = si_split[0].upper()
     si_numero = si_split[1].lstrip("0")
-    if si_ville == "DSK":
+    if si_ville == "DK":
         await ctx.send("Nous n'avons pas encore la prétention d'être des envahisseurs de l'espace...")
         return
     if si_ville not in cities_list:
