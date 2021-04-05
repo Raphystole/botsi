@@ -95,7 +95,7 @@ async def infos(ctx, user: discord.User):
     except:
         await ctx.send("Aucunes données pour cet utilisateur")
 
-#Mettre à jour ses données utilisateur
+#Affichage des infos sur une carte
 @bot.command(aliases=['map', 'invasion_map','invasionmap'])
 async def carte(ctx, map_number):
     r = requests.get("http://invaders.art.free.fr/botsi/maps.php?controller=get_map&map_number="+map_number).json()
