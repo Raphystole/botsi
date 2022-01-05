@@ -18,8 +18,7 @@ import os
 bot = commands.Bot(command_prefix = "!", description = "Bot informatif sur les Space Invaders")
 slash = SlashCommand(bot, sync_commands = True)
 bot.remove_command('help')
-#api_token = os.environ['API_TOKEN']
-api_token = "fkEzsWjZZgbD0KiB9K4iBiS8GLbOIiAH"
+api_token = os.environ['API_TOKEN']
 cities_list = ["FKF","KLN","BRL","MLB","PRT","WN","DHK","ANVR","BXL","CHAR","RDU","BT","GRU","SP","HK","DJN","BRC","BBO","MLGA","MEN","LA","MIA","NY","SD","AIX","AVI","BTA","CAPF","CLR","CON","CAZ","DIJ","FRQ","GRN","LCT","LIL","LBR","LY","MARS","MTB","MPL","NA","NIM","PA","PAU","PRP","RN","TLS","VMRL","VRS","LDN","MAN","NCL","VRN","ELT","RA","ROM","TK","MBSA","MRAK","RBA","CCU","KAT","AMS","NOO","RTD","FAO","LJU","SPACE","HALM","VSB","ANZR","BSL","BRN","GNV","LSN","GRTI","BGK","DJBA","IST"]
 
 # -------------------- FONCTIONS DE DEBUG --------------------
@@ -252,5 +251,4 @@ async def bienvenue(ctx):
     await ctx.send("Merci "+ctx.author.mention+" !")
 
 # -------------------- DEMARRAGE DU BOT --------------------
-#bot.run(os.environ['TOKEN'])
-bot.run("NzY0MTc5MzgzNTUxNjU1OTc2.X4Cfgg.fLFd-vREP4_HSonQLcXhYJafXb8")
+bot.run(os.environ['TOKEN'])
