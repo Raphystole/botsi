@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix = "!", description = "Bot informatif sur les S
 slash = SlashCommand(bot, sync_commands = True)
 bot.remove_command('help')
 api_token = os.environ['API_TOKEN']
-cities_list = ["FKF","KLN","BRL","MLB","PRT","WN","DHK","ANVR","BXL","CHAR","RDU","BT","GRU","SP","HK","DJN","BRC","BBO","MLGA","MEN","LA","MIA","NY","SD","AIX","AVI","BTA","CAPF","CLR","CON","CAZ","DIJ","FRQ","GRN","LCT","LIL","LBR","LY","MARS","MTB","MPL","NA","NIM","PA","PAU","PRP","RN","TLS","VMRL","VRS","LDN","MAN","NCL","VRN","ELT","RA","ROM","TK","MBSA","MRAK","RBA","CCU","KAT","AMS","NOO","RTD","FAO","LJU","SPACE","HALM","VSB","ANZR","BSL","BRN","GNV","LSN","GRTI","BGK","DJBA","IST"]
+cities_list = ["FKF","KLN","BRL","MLB","PRT","WN","DHK","ANVR","BXL","CHAR","RDU","BT","GRU","SP","HK","DJN","BRC","BBO","MLGA","MEN","LA","MIA","NY","SD","AIX","AVI","BTA","CAPF","CLR","CON","CAZ","DIJ","FRQ","GRN","LCT","LIL","LBR","LY","MARS","MTB","MPL","NA","NIM","PA","PAU","PRP","RN","TLS","VMRL","VRS","LDN","MAN","NCL","VRN","ELT","RA","ROM","TK","MBSA","MRAK","RBA","CCU","KAT","AMS","NOO","RTD","FAO","LJU","SPACE","HALM","VSB","ANZR","BSL","BRN","GNV","LSN","GRTI","BGK","DJBA","IST","POTI"]
 
 # -------------------- FONCTIONS DE DEBUG --------------------
 #Fonction appelée lorsque le bot est prêt
