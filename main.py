@@ -170,6 +170,7 @@ async def ville(ctx, ville):
     await ctx.send(embed=embed)
 
 #Affichage des infos sur un SI
+@bot.command()
 @slash.slash(name="si", guild_ids=[730904034608676907], description="Rechercher des informations sur un SI", options=[
     create_option(name="si", description="Nom du SI (par exemple : PA_0001)", option_type=3, required=True)
 ])
