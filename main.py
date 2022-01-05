@@ -2,6 +2,8 @@
 #Librairie Discord
 import discord
 from discord.ext import commands
+from discord_slash import SlashCommand
+from discord_slash.utils.manage_commands import create_option
 
 #Librairies nécessaires au scrap
 import requests #Afin de pouvoir accéder à une page web avec une requête POST
@@ -14,8 +16,10 @@ import os
 
 # -------------------- INITIALISATION DU BOT --------------------
 bot = commands.Bot(command_prefix = "!", description = "Bot informatif sur les Space Invaders")
+slash = SlashCommand(bot, sync_commands = True)
 bot.remove_command('help')
-api_token = os.environ['API_TOKEN']
+#api_token = os.environ['API_TOKEN']
+api_token = "fkEzsWjZZgbD0KiB9K4iBiS8GLbOIiAH"
 cities_list = ["FKF","KLN","BRL","MLB","PRT","WN","DHK","ANVR","BXL","CHAR","RDU","BT","GRU","SP","HK","DJN","BRC","BBO","MLGA","MEN","LA","MIA","NY","SD","AIX","AVI","BTA","CAPF","CLR","CON","CAZ","DIJ","FRQ","GRN","LCT","LIL","LBR","LY","MARS","MTB","MPL","NA","NIM","PA","PAU","PRP","RN","TLS","VMRL","VRS","LDN","MAN","NCL","VRN","ELT","RA","ROM","TK","MBSA","MRAK","RBA","CCU","KAT","AMS","NOO","RTD","FAO","LJU","SPACE","HALM","VSB","ANZR","BSL","BRN","GNV","LSN","GRTI","BGK","DJBA","IST"]
 
 # -------------------- FONCTIONS DE DEBUG --------------------
@@ -167,7 +171,9 @@ async def ville(ctx, ville):
     await ctx.send(embed=embed)
 
 #Affichage des infos sur un SI
-@bot.command()
+@slash.slash(name="si", guild_ids=[730904034608676907], description="Rechercher des informations sur un SI", options=[
+    create_option(name="si", description="Nom du SI (par exemple : PA_0001)", option_type=3, required=True)
+])
 async def si(ctx, si):
     si_split = si.split("_")
     si_ville = si_split[0].upper()
@@ -183,7 +189,7 @@ async def si(ctx, si):
         await ctx.send("Nous n'avons pas encore la prétention d'être des envahisseurs de l'espace...")
         return
     if si_ville not in cities_list:
-        await ctx.send("La ville \""+si_ville+"\" n'a pas été envahie")
+        await ctx.send(f"La ville \"{si_ville}\" n'a pas été envahie")
         return
     #Formattage des chiffres
     if si_ville == "PA":
@@ -246,4 +252,5 @@ async def bienvenue(ctx):
     await ctx.send("Merci "+ctx.author.mention+" !")
 
 # -------------------- DEMARRAGE DU BOT --------------------
-bot.run(os.environ['TOKEN'])
+#bot.run(os.environ['TOKEN'])
+bot.run("NzY0MTc5MzgzNTUxNjU1OTc2.X4Cfgg.fLFd-vREP4_HSonQLcXhYJafXb8")
