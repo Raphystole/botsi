@@ -142,7 +142,7 @@ async def infos_serveur(ctx):
 
 #Affichage des infos sur une ville
 #@bot.command()
-@slash.slash(name="si", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville", options=[
+@slash.slash(name="ville", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville", options=[
     create_option(name="ville", description="Nom de la ville", option_type=3, required=True, choices=[
         create_choice(name="test1",value="1"),
         create_choice(name="test1",value="2")
