@@ -2,8 +2,9 @@
 #Librairie Discord
 import discord
 from discord.ext import commands
-from discord_slash import SlashCommand
+from discord_slash import SlashCommand, ButtonStyle
 from discord_slash.utils.manage_commands import create_option, create_choice
+from discord_slash.utils.manage_components import *
 
 #Librairies nécessaires au scrap
 import requests #Afin de pouvoir accéder à une page web avec une requête POST
@@ -29,7 +30,7 @@ async def on_ready():
 
 # -------------------- FONCTIONS UTILES --------------------
 #Affichage de l'aide
-@bot.command(aliases=['help', 'helpou', 'liste', 'commandes'])
+@slash.slash(name="aide", description="Aide à propos des commandes disponibles")
 async def aide(ctx):
     description_content = "Ce robot fonctionne sur le serveur mais aussi par message privé, vous pouvez simplement lui écrire et il vous répondra.\n\n"
     description_content += "**Liste des commandes :**\n\n"
@@ -53,15 +54,25 @@ async def aliases(ctx):
     await ctx.send(embed=embed)
 
 #Mettre à jour ses données utilisateur
-@bot.command(aliases=['mesinfos', 'modifier', 'mi', 'maj'])
-async def mes_infos(ctx, account_type, username):
-    account_type = account_type.lower()
-    account_type = account_type.replace("flashinvaders", "flash_invaders").replace("site", "website").replace("webwebsite", "website").replace("spotter-invader", "spotter")
-    if account_type in ["flash_invaders","website","instagram","flickr","spotter"]:
-        url_api = "http://invaders.art.free.fr/botsi/users.php?controller=set_"+account_type+"&id_discord="+str(ctx.message.author.id)+"&"+account_type+"="+username+"&api_token="+api_token
+@slash.slash(name="mes_informations", guild_ids=[730904034608676907], description="Mettre à jour mes informations", options=[
+    create_option(name="compte", description="Numéro de la ville", option_type=3, required=True, choices=[
+        create_choice(name="Flash Invaders", value="flash_invaders"),
+        create_choice(name="Site internet", value="website"),
+        create_choice(name="Instagram", value="instagram"),
+        create_choice(name="Flickr", value="flickr"),
+        create_choice(name="Spotter Invader", value="spotter")
+    ]),
+    create_option(name="nom", description="Username ou pseudo", option_type=3, required=True)
+])
+async def mes_infos(ctx, compte, nom):
+    print(ctx.author_id)
+    compte = compte.lower()
+    compte = compte.replace("flashinvaders", "flash_invaders").replace("site", "website").replace("webwebsite", "website").replace("spotter-invader", "spotter")
+    if compte in ["flash_invaders","website","instagram","flickr","spotter"]:
+        url_api = "http://invaders.art.free.fr/botsi/users.php?controller=set_"+compte+"&id_discord="+str(ctx.author_id)+"&"+compte+"="+nom+"&api_token="+api_token
         requests.get(url_api)
-        account_type = account_type.replace("flash_invaders", "pseudo FlashInvaders").replace("instagram", "pseudo Instagram").replace("spotter", "pseudo Spotter-Invader").replace("flickr", "pseudo Flickr").replace("website", "site internet")
-        await ctx.send("Ton "+account_type+" a bien été mis à jour !")
+        compte = compte.replace("flash_invaders", "pseudo FlashInvaders").replace("instagram", "pseudo Instagram").replace("spotter", "pseudo Spotter-Invader").replace("flickr", "pseudo Flickr").replace("website", "site internet")
+        await ctx.send("Ton "+compte+" a bien été mis à jour !")
     else :
         await ctx.send("Ce service n'est pas pris en compte par le robot.\nServices pris en compte : FlashInvaders, Instagram, Flickr, Spotter-Invader, Website.")
 
@@ -99,9 +110,13 @@ async def infos(ctx, user: discord.User):
         await ctx.send("Aucunes données pour cet utilisateur")
 
 #Mettre à jour ses données utilisateur
-@bot.command(aliases=['map', 'invasion_map','invasionmap'])
-async def carte(ctx, map_number):
-    r = requests.get("http://invaders.art.free.fr/botsi/maps.php?controller=get_map&map_number="+map_number).json()
+@slash.slash(name="carte", guild_ids=[730904034608676907], description="Rechercher la carte d'une ville", options=[
+    create_option(name="numero", description="Numéro de la ville", option_type=3, required=True)
+])
+async def carte(ctx, numero):
+    numero = str(numero)
+    numero = numero.zfill(2)
+    r = requests.get("http://invaders.art.free.fr/botsi/maps.php?controller=get_map&map_number="+numero).json()
     is_blank = True
     embed_description = ""
     if r["city"]:
@@ -122,16 +137,16 @@ async def carte(ctx, map_number):
     if r["source"]:
         embed_description += "**Source :** "+str(r["source"])+"\n"
         is_blank = False
-    embed_description += "[Voir la carte complète](http://invaders.art.free.fr/botsi/maps?controller=map&map="+map_number+")"
+    embed_description += "[Voir la carte complète](http://invaders.art.free.fr/botsi/maps?controller=map&map="+numero+")"
     if is_blank :
-        await ctx.send("Cette carte n'existe pas")
+        await ctx.send("Cette carte n'existe pas", hidden=True)
     else :
-        embed=discord.Embed(color=0x04ff00, title="Informations sur la carte numéro : "+map_number, description=embed_description)
+        embed=discord.Embed(color=0x04ff00, title="Informations sur la carte numéro : "+numero, description=embed_description)
         embed.set_image(url=r["cover_img_link"])
         await ctx.send(embed=embed)
 
 #Affichage des infos du serveur
-@bot.command()
+@slash.slash(name="infos_serveur", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville")
 async def infos_serveur(ctx):
     server = ctx.guild
     numberOfTextChannels = len(server.text_channels)
@@ -143,9 +158,7 @@ async def infos_serveur(ctx):
 #Affichage des infos sur une ville
 #@bot.command()
 @slash.slash(name="ville", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville", options=[
-    create_option(name="ville", description="Nom de la ville", option_type=3, required=True, choices=[
-        create_choice(name="Aix-en-Provence", value="aix-en-provence"),create_choice(name="Amsterdam", value="amsterdam"),create_choice(name="Anvers", value="anvers"),create_choice(name="Anzère", value="anzere"),create_choice(name="Avignon", value="avignon"),create_choice(name="Bangkok", value="bangkok"),create_choice(name="Barcelone", value="barcelone"),create_choice(name="Bâle", value="basel"),create_choice(name="Bastia", value="bastia"),create_choice(name="Berlin", value="berlin"),create_choice(name="Berne", value="bern"),create_choice(name="Bhutan", value="bhutan"),create_choice(name="Bilbao", value="bilbao"),create_choice(name="Bruxelles", value="bruxelles"),create_choice(name="Cancún", value="cancun"),create_choice(name="Cap-Ferret", value="capferret"),create_choice(name="Côte d'Azur", value="caz"),create_choice(name="Charleroi", value="charleroi"),create_choice(name="Clermont-Ferrand", value="clermont-ferrand"),create_choice(name="Cologne", value="cologne"),create_choice(name="Contis-les-Bains", value="contis-les-bains"),create_choice(name="Daejeon", value="daejeon"),create_choice(name="Dhaka", value="dakha"),create_choice(name="Dijon", value="dijon"),create_choice(name="Djerba", value="djerba"),create_choice(name="Eilat", value="eilat"),create_choice(name="Faro", value="faro"),create_choice(name="Forcalquier", value="forcalquier"),create_choice(name="Francfort", value="frankfurt"),create_choice(name="Genève", value="geneve"),create_choice(name="Grenoble", value="grenoble"),create_choice(name="Grude", value="grude"),create_choice(name="Grumeti", value="grumeti"),create_choice(name="Halmstad", value="halmstad"),create_choice(name="Hong-Kong", value="hong-kong"),create_choice(name="Istanbul", value="istanbul"),create_choice(name="Katmandou", value="katmandou"),create_choice(name="La Ciotat", value="la-ciotat"),create_choice(name="Lausanne", value="lausanne"),create_choice(name="Lille", value="lille"),create_choice(name="Ljubjana", value="ljubjana"),create_choice(name="Londres", value="london"),create_choice(name="Los-Angeles", value="los-angeles"),create_choice(name="Luberon", value="luberon"),create_choice(name="Lyon", value="lyon"),create_choice(name="Malaga", value="malaga"),create_choice(name="Manchester", value="manchester"),create_choice(name="Marrakech", value="marrakech"),create_choice(name="Marseille", value="marseille"),create_choice(name="Melbourne", value="melbourne"),create_choice(name="Minorque", value="menorca"),create_choice(name="Miami", value="miami"),create_choice(name="Mombasa", value="mombasa"),create_choice(name="Montauban", value="montauban"),create_choice(name="Montpellier", value="montpellier"),create_choice(name="Nantes", value="nantes"),create_choice(name="New-York", value="new-york"),create_choice(name="Newcastle", value="newcastle"),create_choice(name="Nîmes", value="nimes"),create_choice(name="Noordwijk", value="noordwijk"),create_choice(name="Paris", value="paris"),create_choice(name="Pau", value="pau"),create_choice(name="Perpignan", value="perpignan"),create_choice(name="Perth", value="perth"),create_choice(name="Potosi", value="potosi"),create_choice(name="Rabat", value="rabat"),create_choice(name="Ravenne", value="ravenna"),create_choice(name="Redu", value="redu"),create_choice(name="Rennes", value="rennes"),create_choice(name="Rome", value="rome"),create_choice(name="Rotterdam", value="rotterdam"),create_choice(name="San-Diego", value="san-diego"),create_choice(name="Saõ-Paulo", value="sao-paulo"),create_choice(name="Space", value="space"),create_choice(name="Tokyo", value="tokyo"),create_choice(name="Toulouse", value="toulouse"),create_choice(name="Valmorel", value="valmorel"),create_choice(name="Varanasi", value="varanasi"),create_choice(name="Versailles", value="versailles"),create_choice(name="Vienne", value="vienna"),create_choice(name="Visby", value="visby")
-    ])
+    create_option(name="ville", description="Nom de la ville", option_type=3, required=True)
 ])
 async def ville(ctx, ville):
     ville = ville.lower()
@@ -254,6 +267,20 @@ async def coucou(ctx):
 @bot.command()
 async def bienvenue(ctx):
     await ctx.send("Merci "+ctx.author.mention+" !")
+
+'''@slash.slash(name="quiz", guild_ids=[730904034608676907], description="Quiz de test")
+async def quiz(ctx):
+    select = create_select(
+        options=[
+            create_select_option("Haha tRoP mArRaNt lOl", value="1", emoji="😂"),
+            create_select_option("...", value="2", emoji="😏"),
+            create_select_option("friendzone", value="3", emoji="💛"),
+            create_select_option("renard", value="4", emoji="🦊"),        await choice_ctx.send("Bonne réponse ! 🦊")
+    else:
+        message = ctx.message
+        await message.delete()
+        await choice_ctx.send("Mauvaise réponse... 😒")
+'''
 
 # -------------------- DEMARRAGE DU BOT --------------------
 bot.run(os.environ['TOKEN'])
