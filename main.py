@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 from discord_slash import SlashCommand
-from discord_slash.utils.manage_commands import create_option
+from discord_slash.utils.manage_commands import create_option, create_choice
 
 #Librairies nécessaires au scrap
 import requests #Afin de pouvoir accéder à une page web avec une requête POST
@@ -141,7 +141,13 @@ async def infos_serveur(ctx):
     await ctx.send(message)
 
 #Affichage des infos sur une ville
-@bot.command()
+#@bot.command()
+@slash.slash(name="si", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville", options=[
+    create_option(name="ville", description="Nom de la ville", option_type=3, required=True, choices=[
+        create_choice(name="test1",value="1"),
+        create_choice(name="test1",value="2")
+    ])
+])
 async def ville(ctx, ville):
     ville = ville.lower()
     ville = ville.replace("francfort","frankfurt").replace("vienne","vienna").replace("wien","vienna").replace("saopaulo","sao-paulo").replace("hongkong","hong-kong").replace("barcelona","barcelone")
