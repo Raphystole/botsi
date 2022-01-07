@@ -28,9 +28,11 @@ cities_list = ["FKF","KLN","BRL","MLB","PRT","WN","DHK","ANVR","BXL","CHAR","RDU
 async def on_ready():
     print("Bot prêt !")
 
+#guild_ids=[730904034608676907]
+    
 # -------------------- FONCTIONS UTILES --------------------
 #Affichage de l'aide
-@slash.slash(name="aide", guild_ids=[730904034608676907], description="Aide à propos des commandes disponibles")
+@slash.slash(name="aide", description="Aide à propos des commandes disponibles")
 async def aide(ctx):
     description_content = "Ce robot fonctionne sur le serveur mais aussi par message privé, vous pouvez simplement lui écrire et il vous répondra.\n"
     description_content += "Les commandes se pré-remplissent, il vous suffit de taper le début de la commande et du ou des paramètre(s) afin de les compléter.\n\n"
@@ -45,7 +47,7 @@ async def aide(ctx):
     await ctx.send(embed=embed)
 
 #Mettre à jour ses données utilisateur
-@slash.slash(name="mes_informations", guild_ids=[730904034608676907], description="Mettre à jour mes informations", options=[
+@slash.slash(name="mes_informations", description="Mettre à jour mes informations", options=[
     create_option(name="compte", description="Numéro de la ville", option_type=3, required=True, choices=[
         create_choice(name="Flash Invaders", value="flash_invaders"),
         create_choice(name="Site internet", value="website"),
@@ -68,7 +70,7 @@ async def mes_infos(ctx, compte, nom):
         await ctx.send("Ce service n'est pas pris en compte par le robot.\nServices pris en compte : FlashInvaders, Instagram, Flickr, Spotter-Invader, Website.")
 
 #Mettre à jour ses données utilisateur
-@slash.slash(name="infos", guild_ids=[730904034608676907], description="Rechercher des informations sur un utilisateur", options=[
+@slash.slash(name="infos", description="Rechercher des informations sur un utilisateur", options=[
     create_option(name="utilisateur", description="Utilisateur du serveur Discord", option_type=6, required=True)
 ])
 @bot.command(aliases=['i'])
@@ -104,7 +106,7 @@ async def infos(ctx, utilisateur: discord.User):
         await ctx.send("Aucunes données pour cet utilisateur")
 
 #Mettre à jour ses données utilisateur
-@slash.slash(name="carte", guild_ids=[730904034608676907], description="Rechercher la carte d'une ville", options=[
+@slash.slash(name="carte", description="Rechercher la carte d'une ville", options=[
     create_option(name="carte", description="Numéro (ex : 1), nom (ex: Paris) ou acronyme (ex: PA) de la ville", option_type=3, required=True)
 ])
 async def carte(ctx, carte):
@@ -140,7 +142,7 @@ async def carte(ctx, carte):
         await ctx.send(embed=embed)
 
 #Affichage des infos du serveur
-@slash.slash(name="serveur", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville")
+@slash.slash(name="serveur", description="Rechercher des informations sur une ville")
 async def serveur(ctx):
     server = ctx.guild
     numberOfTextChannels = len(server.text_channels)
@@ -151,7 +153,7 @@ async def serveur(ctx):
 
 #Affichage des infos sur une ville
 #@bot.command()
-@slash.slash(name="ville", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville", options=[
+@slash.slash(name="ville", description="Rechercher des informations sur une ville", options=[
     create_option(name="ville", description="Nom de la ville", option_type=3, required=True)
 ])
 async def ville(ctx, ville):
@@ -182,7 +184,7 @@ async def ville(ctx, ville):
     await ctx.send(embed=embed)
 
 #Affichage des infos sur un SI
-@slash.slash(name="si", guild_ids=[730904034608676907], description="Rechercher des informations sur un SI", options=[
+@slash.slash(name="si", description="Rechercher des informations sur un SI", options=[
     create_option(name="si", description="Nom du SI (par exemple : PA_0001)", option_type=3, required=True)
 ])
 async def si(ctx, si):
@@ -262,7 +264,7 @@ async def coucou(ctx):
 async def bienvenue(ctx):
     await ctx.send("Merci "+ctx.author.mention+" !")
 
-'''@slash.slash(name="quiz", guild_ids=[730904034608676907], description="Quiz de test")
+'''@slash.slash(name="quiz", description="Quiz de test")
 async def quiz(ctx):
     select = create_select(
         options=[
