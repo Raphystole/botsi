@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 from discord_slash import SlashCommand, ButtonStyle
-from discord_slash.utils.manage_commands import create_option, create_choice
+from discord_slash.utils.manage_commands import create_option, create_choice, remove_all_commands
 from discord_slash.utils.manage_components import *
 
 #Librairies nécessaires au scrap
@@ -30,27 +30,18 @@ async def on_ready():
 
 # -------------------- FONCTIONS UTILES --------------------
 #Affichage de l'aide
-@slash.slash(name="aide", description="Aide à propos des commandes disponibles")
+@slash.slash(name="aide", guild_ids=[730904034608676907], description="Aide à propos des commandes disponibles")
 async def aide(ctx):
-    description_content = "Ce robot fonctionne sur le serveur mais aussi par message privé, vous pouvez simplement lui écrire et il vous répondra.\n\n"
+    description_content = "Ce robot fonctionne sur le serveur mais aussi par message privé, vous pouvez simplement lui écrire et il vous répondra.\n"
+    description_content += "Les commandes se pré-remplissent, il vous suffit de taper le début de la commande et du ou des paramètre(s) afin de les compléter.\n\n"
     description_content += "**Liste des commandes :**\n\n"
-    description_content += "**!infos_serveur** : affiche les informations du serveur\n"
-    description_content += "**!aliases** : affiche les aliases des différentes commandes\n"
-    description_content += "**!si VILLE_NUMERO** : affiche les informations d'un SI - exemple : !si PA_1200\n"
-    description_content += "**!ville VILLE** : affiche les informations d'une ville - exemple : !ville Paris ou !ville PA\n"
-    description_content += "**!mes_infos SERVICE PSEUDO** : met à jour mes informations - exemple : !mes_infos instagram Raphystole *!Confidentialité pour connaitre l'utlisation de tes données*\n"
-    description_content += "**!infos @UTILISATEUR** : affiche les informations d'un utilisateur - exemple : !infos @Raphystole\n"
+    description_content += "**/infos_serveur** : affiche les informations du serveur\n"
+    description_content += "**/si VILLE_NUMERO** : affiche les informations d'un SI - exemple : !si PA_1200\n"
+    description_content += "**/ville VILLE** : affiche les informations d'une ville - exemple : !ville Paris ou !ville PA\n"
+    description_content += "**/mes_infos COMPTE PSEUDO** : met à jour mes informations - exemple : !mes_infos instagram Raphystole *!Confidentialité pour connaitre l'utlisation de tes données*\n"
+    description_content += "**/infos @UTILISATEUR** : affiche les informations d'un utilisateur - exemple : !infos @Raphystole\n"
     description_content += "*Vos informations ne seront pas divulguées hors de ce robot. Celles-ci sont conservées pendant une durée de 3 ans maximum et peuvent être détruites sur simple demande ou en utilisant la commande dédiée.*\n"
     embed=discord.Embed(color=0x04ff00, title="Fonctionnement du robot :", description=description_content)
-    await ctx.send(embed=embed)
-
-#Affichage des aliases
-@bot.command(aliases=['alias'])
-async def aliases(ctx):
-    description_content = ""
-    description_content += "**!aide** = !help, !helpou, !liste, !commandes\n" 
-    description_content += "**!mes_infos** : !mesinfos, !mi, !maj, !modifier"
-    embed=discord.Embed(color=0x04ff00, title="Liste des aliases :", description=description_content)
     await ctx.send(embed=embed)
 
 #Mettre à jour ses données utilisateur
@@ -77,9 +68,12 @@ async def mes_infos(ctx, compte, nom):
         await ctx.send("Ce service n'est pas pris en compte par le robot.\nServices pris en compte : FlashInvaders, Instagram, Flickr, Spotter-Invader, Website.")
 
 #Mettre à jour ses données utilisateur
+@slash.slash(name="infos", guild_ids=[730904034608676907], description="Rechercher des informations sur un utilisateur", options=[
+    create_option(name="utilisateur", description="Utilisateur du serveur Discord", option_type=6, required=True)
+])
 @bot.command(aliases=['i'])
-async def infos(ctx, user: discord.User):
-    response = requests.get("http://invaders.art.free.fr/botsi/users.php?controller=get_all&id_discord="+str(user.id)+"&api_token="+api_token)
+async def infos(ctx, utilisateur: discord.User):
+    response = requests.get("http://invaders.art.free.fr/botsi/users.php?controller=get_all&id_discord="+str(utilisateur.id)+"&api_token="+api_token)
     try:
         r=response.json()
         is_blank = True
@@ -103,20 +97,20 @@ async def infos(ctx, user: discord.User):
             await ctx.send("Aucunes données pour cet utilisateur")
         else :
             embed_description = embed_description[:-1]
-            embed=discord.Embed(color=0x04ff00, title="Informations sur "+str(user).rsplit("#",1)[0], description=embed_description)
-            embed.set_thumbnail(url=user.avatar_url)
+            embed=discord.Embed(color=0x04ff00, title="Informations sur "+str(utilisateur).rsplit("#",1)[0], description=embed_description)
+            embed.set_thumbnail(url=utilisateur.avatar_url)
             await ctx.send(embed=embed)
     except:
         await ctx.send("Aucunes données pour cet utilisateur")
 
 #Mettre à jour ses données utilisateur
 @slash.slash(name="carte", guild_ids=[730904034608676907], description="Rechercher la carte d'une ville", options=[
-    create_option(name="numero", description="Numéro de la ville", option_type=3, required=True)
+    create_option(name="carte", description="Numéro (ex : 1), nom (ex: Paris) ou acronyme (ex: PA) de la ville", option_type=3, required=True)
 ])
-async def carte(ctx, numero):
-    numero = str(numero)
-    numero = numero.zfill(2)
-    r = requests.get("http://invaders.art.free.fr/botsi/maps.php?controller=get_map&map_number="+numero).json()
+async def carte(ctx, carte):
+    carte = str(carte).zfill(2).lower()
+    carte = carte.replace("paris1", "01").replace("pa1", "01").replace("montpellier", "02").replace("mpl", "02").replace("grenoble", "03").replace("grn", "03").replace("berne", "04").replace("brn", "04").replace("avignon", "05").replace("avi", "05").replace("genève", "06").replace("gnv", "06").replace("lyon", "07").replace("ly", "07").replace("rotterdam", "08").replace("rtd", "08").replace("tokyo", "09").replace("tk", "09").replace("perth", "10").replace("prt", "10").replace("new-york", "11").replace("ny", "11").replace("los angeles", "12").replace("la", "12").replace("manchester", "13").replace("man", "13").replace("bastia", "14").replace("bta", "14").replace("vienne", "15").replace("wn", "15").replace("côte d'azur", "16").replace("caz", "16").replace("bilbao", "17").replace("bbo", "17").replace("kathmandou", "18").replace("kat", "18").replace("rome", "19").replace("rom", "19").replace("paris2", "20").replace("pa2", "20").replace("saõ paulo", "21").replace("sp", "21").replace("bruxelles", "22").replace("bxl", "22").replace("miami", "23").replace("mia", "23").replace("ravenne", "24").replace("ra", "24").replace("djerba", "25").replace("djba", "25").replace("marseille", "26").replace("mars", "26")
+    r = requests.get("http://invaders.art.free.fr/botsi/maps.php?controller=get_map&map_number="+carte).json()
     is_blank = True
     embed_description = ""
     if r["city"]:
@@ -137,17 +131,17 @@ async def carte(ctx, numero):
     if r["source"]:
         embed_description += "**Source :** "+str(r["source"])+"\n"
         is_blank = False
-    embed_description += "[Voir la carte complète](http://invaders.art.free.fr/botsi/maps?controller=map&map="+numero+")"
+    embed_description += "[Voir la carte complète](http://invaders.art.free.fr/botsi/maps?controller=map&map="+carte+")"
     if is_blank :
         await ctx.send("Cette carte n'existe pas", hidden=True)
     else :
-        embed=discord.Embed(color=0x04ff00, title="Informations sur la carte numéro : "+numero, description=embed_description)
+        embed=discord.Embed(color=0x04ff00, title="Informations sur la carte numéro : "+carte, description=embed_description)
         embed.set_image(url=r["cover_img_link"])
         await ctx.send(embed=embed)
 
 #Affichage des infos du serveur
-@slash.slash(name="infos_serveur", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville")
-async def infos_serveur(ctx):
+@slash.slash(name="serveur", guild_ids=[730904034608676907], description="Rechercher des informations sur une ville")
+async def serveur(ctx):
     server = ctx.guild
     numberOfTextChannels = len(server.text_channels)
     numberOfPeople = server.member_count
