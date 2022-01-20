@@ -1,7 +1,7 @@
 # -------------------- IMPORT DES LIBRAIRIES --------------------
 #Librairie Discord
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord_slash import SlashCommand, ButtonStyle
 from discord_slash.utils.manage_commands import create_option, create_choice, remove_all_commands
 from discord_slash.utils.manage_components import *
@@ -29,21 +29,6 @@ async def on_ready():
     print("Bot prêt !")
 
 #guild_ids=[730904034608676907]
-
-score = 0
-
-@tasks.loop(minutes=0.5)
-async def test():
-    global score
-    await bot.wait_until_ready()
-    channel = bot.get_channel(933785886221553707)
-    r = requests.get("https://api.space-invaders.com/api/search_player/?uid=&search_name=pgut").json()
-    score_tmp = r['Players'][0]['score']
-    if score_tmp > score:
-        await channel.send("Nouveau SI flashé !\nSon score est de : "+str(score_tmp-score))
-        score = score_tmp
-
-test.start()
 
 # -------------------- FONCTIONS UTILES --------------------
 #Affichage de l'aide
