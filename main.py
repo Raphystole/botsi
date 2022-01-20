@@ -1,7 +1,7 @@
 # -------------------- IMPORT DES LIBRAIRIES --------------------
 #Librairie Discord
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord_slash import SlashCommand, ButtonStyle
 from discord_slash.utils.manage_commands import create_option, create_choice, remove_all_commands
 from discord_slash.utils.manage_components import *
