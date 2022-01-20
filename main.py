@@ -189,7 +189,6 @@ async def ville(ctx, ville):
     create_option(name="si", description="Nom du SI (par exemple : PA_0001)", option_type=3, required=True)
 ])
 async def si(ctx, si):
-    await remove_all_commands(764179383551655976,os.environ['TOKEN'],730904034608676907)
     si_split = si.split("_")
     si_ville = si_split[0].upper()
     si_numero = si_split[1].lstrip("0")
