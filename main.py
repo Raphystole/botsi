@@ -29,7 +29,22 @@ async def on_ready():
     print("Bot prêt !")
 
 #guild_ids=[730904034608676907]
-    
+
+score = 0
+
+@tasks.loop(minutes=0.5)
+async def test():
+    global score
+    await bot.wait_until_ready()
+    channel = bot.get_channel(933785886221553707)
+    r = requests.get("https://api.space-invaders.com/api/search_player/?uid=&search_name=pgut").json()
+    score_tmp = r['Players'][0]['score']
+    if score_tmp > score:
+        await channel.send("Nouveau SI flashé !\nSon score est de : "+str(score_tmp-score))
+        score = score_tmp
+
+test.start()
+
 # -------------------- FONCTIONS UTILES --------------------
 #Affichage de l'aide
 @slash.slash(name="aide", description="Aide à propos des commandes disponibles")
@@ -38,16 +53,16 @@ async def aide(ctx):
     description_content += "Les commandes se pré-remplissent, il vous suffit de taper le début de la commande et du ou des paramètre(s) afin de les compléter.\n\n"
     description_content += "**Liste des commandes :**\n\n"
     description_content += "**/infos_serveur** : affiche les informations du serveur\n"
-    description_content += "**/si VILLE_NUMERO** : affiche les informations d'un SI - exemple : !si PA_1200\n"
-    description_content += "**/ville VILLE** : affiche les informations d'une ville - exemple : !ville Paris ou !ville PA\n"
-    description_content += "**/mes_infos COMPTE PSEUDO** : met à jour mes informations - exemple : !mes_infos instagram Raphystole *!Confidentialité pour connaitre l'utlisation de tes données*\n"
-    description_content += "**/infos @UTILISATEUR** : affiche les informations d'un utilisateur - exemple : !infos @Raphystole\n"
+    description_content += "**/si si:VILLE_NUMERO** : affiche les informations d'un SI - exemple : /si si:PA_1200\n"
+    description_content += "**/ville ville:VILLE** : affiche les informations d'une ville - exemple : /ville ville:Paris ou /ville ville:PA\n"
+    description_content += "**/mes_infos compte:COMPTE nom:PSEUDO** : met à jour mes informations - exemple : /mes_infos compte:instagram nom:Raphystole\n"
+    description_content += "**/infos utilisateurs@UTILISATEUR** : affiche les informations d'un utilisateur - exemple : /infos utilisateur:@Raphystole\n"
     description_content += "*Vos informations ne seront pas divulguées hors de ce robot. Celles-ci sont conservées pendant une durée de 3 ans maximum et peuvent être détruites sur simple demande ou en utilisant la commande dédiée.*\n"
     embed=discord.Embed(color=0x04ff00, title="Fonctionnement du robot :", description=description_content)
     await ctx.send(embed=embed)
 
 #Mettre à jour ses données utilisateur
-@slash.slash(name="mes_informations", description="Mettre à jour mes informations", options=[
+@slash.slash(name="mes_infos", description="Mettre à jour mes informations", options=[
     create_option(name="compte", description="Numéro de la ville", option_type=3, required=True, choices=[
         create_choice(name="Flash Invaders", value="flash_invaders"),
         create_choice(name="Site internet", value="website"),
@@ -157,6 +172,7 @@ async def serveur(ctx):
     create_option(name="ville", description="Nom de la ville", option_type=3, required=True)
 ])
 async def ville(ctx, ville):
+    await remove_all_commands(764179383551655976,os.environ['TOKEN'],730904034608676907)
     ville = ville.lower()
     ville = ville.replace("francfort","frankfurt").replace("vienne","vienna").replace("wien","vienna").replace("saopaulo","sao-paulo").replace("hongkong","hong-kong").replace("barcelona","barcelone")
     convert_spotter_spaceinvaders = {"aix":"aix-en-provence","ams":"amsterdam","anvr":"anvers","anzr":"anzere","avi":"avignon","bgk":"bangkok","brc":"barcelone","bsl":"basel","bta":"bastia","brl":"berlin ","brn":"bern","bt":"bhutan","bbo":"bilbao","bxl":"bruxelles","ccu":"cancun","capf":"capferret","caz":"caz","char":"charleroi","clr":"clermont-ferrand","kln":"cologne","con":"contis-les-bains","djn":"daejeon","dhk":"dakha","cij":"dijon","djba":"djerba","elt":"eilat","fao":"faro","frq":"forcalquier","fkf":"frankfurt","gnv":"geneve","grn":"grenoble","gru":"grude","grti":"grumeti","halm":"halmstad","hk":"hong-kong","ist":"istanbul","kat":"katmandou","lct":"la-ciotat","lsn":"lausanne","lil":"lille","lju":"ljubjana","ldn":"london","la":"los-angeles","lbr":"luberon","ly":"lyon","mlga":"malaga","man":"manchester","mrak":"marrakech","mars":"marseille","mlb":"melbourne","men":"menorca","mia":"miami","mbsa":"mombasa","mtb":"montauban","mpl":"montpellier","na":"nantes","ncl":"newcastle","ny":"new-york","nim":"nimes"," oo":"noordwijk","pa":"paris","pau":"pau","prp":"perpignan","prt":"perth","rba":"rabat","ra":"ravenna","rdu":"redu","rn":"rennes","rom":"rome","rtd":"rotterdam","sd":"san-diego","sp":"sao-paulo","tk":"tokyo","tls":"toulouse","vlmo":"valmorel","vrn":"varanasi","vrs":"versailles","wn":"vienna","vsb":"visby"}
@@ -188,6 +204,7 @@ async def ville(ctx, ville):
     create_option(name="si", description="Nom du SI (par exemple : PA_0001)", option_type=3, required=True)
 ])
 async def si(ctx, si):
+    await remove_all_commands(764179383551655976,os.environ['TOKEN'],730904034608676907)
     si_split = si.split("_")
     si_ville = si_split[0].upper()
     si_numero = si_split[1].lstrip("0")
