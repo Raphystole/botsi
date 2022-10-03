@@ -26,7 +26,7 @@ cities_list = ["FKF","KLN","BRL","MLB","PRT","WN","DHK","ANVR","BXL","CHAR","RDU
 #Fonction appelée lorsque le bot est prêt
 @bot.event
 async def on_ready():
-    print("Bot prêt !")
+    print("Bot prêt !!")
 
 #guild_ids=[730904034608676907]
 
