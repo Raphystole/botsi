@@ -252,7 +252,7 @@ async def si(ctx, si):
         color_value = 0xff0000
     else :
         color_value = 0xb1b1b1
-    embed=discord.Embed(color=color_value, title=si_spotter, description="Condition : "+si_condition+"\nPoints : "+si_points+" pts\n[SPOTTER](http://invaders.art.free.fr/invaderspotter_recherchesi.php?si="+si_spotter+") [INSTAGRAM](https://www.instagram.com/explore/tags/"+si_instagram+")")
+    embed=discord.Embed(color=color_value, title=si_spotter, description="Condition : "+si_condition+"\nPoints : "+si_points+" pts\n[SPOTTER](http://invaders.art.free.fr/invaderspotter_recherchesi.php?si="+si_spotter+") [INSTAGRAM](https://www.instagram.com/explore/tags/"+si_instagram.lower()+")")
     embed.set_thumbnail(url="http://invader.spotter.free.fr/"+si_image[0])
     print("Affichage de "+si_spotter)
     await ctx.send(embed=embed)
